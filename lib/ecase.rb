@@ -50,11 +50,15 @@ class Ecase
   end
 
   def verify_exhaustiveness
-    raise Error, "You're missing case(s): #{missing_cases.join(', ')}." if missing_cases.any?
+    if missing_cases.any?
+      raise Error, "You're missing case(s): #{missing_cases.join(', ')}."
+    end
   end
 
   def verify_no_excess_cases
-    raise Error, "You defined illegal case(s): #{excess_cases.join(', ')}." if excess_cases.any?
+    if excess_cases.any?
+      raise Error, "You defined illegal case(s): #{excess_cases.join(', ')}."
+    end
   end
 
   def missing_cases

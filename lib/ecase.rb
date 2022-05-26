@@ -25,13 +25,11 @@ class Ecase
   end
 
   def [](candidate)
-    return @handled_cases[candidate] if @handled_cases.key?(candidate)
+    @handled_cases[candidate].then { return _1 if _1 }
 
-    type = @handled_cases.keys.lazy
-      .select { |k| k.is_a?(Class) || k.is_a?(Module) }
-      .find { |k| candidate.is_a?(k) }
+    type, value = types.find { |k, _v| candidate.is_a? k }
 
-    return @handled_cases[type] if type
+    return value if value
 
     raise Error, "No cases matching: #{candidate}."
   end
@@ -41,11 +39,18 @@ class Ecase
   def on(*values, &block)
     values.each do |value|
       raise Error, "You already defined the case: #{value}." if @handled_cases.key?(value)
+
       @handled_cases[value] = block
     end
   end
 
   private
+
+  def types
+    @handled_cases.lazy.select do |key, _value|
+      key.is_a?(Class) || key.is_a?(Module)
+    end
+  end
 
   def verify_exhaustiveness
     raise Error, "You're missing case(s): #{missing_cases.join(', ')}." if missing_cases.any?

@@ -25,13 +25,10 @@ class Ecase
   end
 
   def [](candidate)
-    @handled_cases[candidate].then { return _1 if _1 }
-
-    type, value = types.find { |k, _v| candidate.is_a? k }
-
-    return value if value
-
-    raise Error, "No cases matching: #{candidate}."
+    @handled_cases.fetch(candidate) do
+      types.find { |k, _v| candidate.is_a? k }&.last ||
+        raise(Error, "No cases matching: #{candidate}.")
+    end
   end
 
   protected

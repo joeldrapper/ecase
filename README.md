@@ -14,7 +14,7 @@ class Car
   attr_reader :color
 
   def color_hex
-    ecase paint, VALID_COLORS do
+    ecase color, VALID_COLORS do
       on(:red) { "#ff0000" }
       on(:green) { "#00ff00" }
       on(:blue) { "#0000ff" }

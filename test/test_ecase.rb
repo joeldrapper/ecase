@@ -56,7 +56,7 @@ class TestEcase < Minitest::Test
       end
     end
 
-    assert_equal "You already defined the case: 2.", error.message
+    assert_equal "You already handled the case: 2.", error.message
   end
 
   def test_catches_invalid_lookup

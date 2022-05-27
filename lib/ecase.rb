@@ -16,8 +16,8 @@ class Ecase
 
     freeze
 
-    verify_exhaustiveness
-    verify_no_excess_cases
+    ensure_no_missing_cases
+    ensure_no_excess_cases
   end
 
   def each(&block)
@@ -33,11 +33,13 @@ class Ecase
 
   protected
 
-  def on(*values, &block)
-    values.each do |value|
-      raise Error, "You already defined the case: #{value}." if @handled_cases.key?(value)
-
-      @handled_cases[value] = block
+  def on(*conditions, &block)
+    conditions.each do |condition|
+      if @handled_cases.key?(condition)
+        raise Error, "You already handled the case: #{condition}."
+      else
+        @handled_cases[condition] = block
+      end
     end
   end
 
@@ -49,13 +51,13 @@ class Ecase
     end
   end
 
-  def verify_exhaustiveness
+  def ensure_no_missing_cases
     if missing_cases.any?
       raise Error, "You're missing case(s): #{missing_cases.join(', ')}."
     end
   end
 
-  def verify_no_excess_cases
+  def ensure_no_excess_cases
     if excess_cases.any?
       raise Error, "You defined illegal case(s): #{excess_cases.join(', ')}."
     end

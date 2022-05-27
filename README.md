@@ -34,37 +34,6 @@ end
 ### Advanced usage
 You can also use an Ecase as part of your own Ruby API.
 
-Let's say you're building an API to delete stale records. You have a list of tables that will need to be pruned in one part, but now you need another part of your API to collect a query to use for each table.
-
-What's more, you need these queries to be exhaustive so that whenever a table is added to the list of tables to prune, a new query is also added for that table. Here's how you could do that:
-
-```ruby
-module Pruner
-  extend self
-
-  def tables_to_prune
-    # some definition of tables to prune
-  end
-
-  def prune_records(&block)
-    @queries = Ecase.new(tables_to_prune, &block)
-
-    @queries.each do |table_name, query|
-      ...
-    end
-  end
-end
-```
-
-By instanciating an Ecase with an enumerable collection of expected cases, and the block that defines behavior for those cases, we can guarantee each case is covererd. This ecase object can then be enumerated for key/value pairs for each case where the value is a block that can be called or passed elsewhere.
-
-
-```ruby
-Pruner.prune_records do
-  on(:users) { User.all.inactive }
-  on(:posts) { Post.created_before(1.year.ago) }
-end
-```
 
 ## Installation
 

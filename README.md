@@ -47,7 +47,7 @@ You can also use an Ecase as part of your own API to demand a case definition.
 
 ```ruby
 def some_method(&block)
-  Enum.new(list_of_things_that_must_be_defined, &block)
+  Ecase.new(list_of_things_that_must_be_defined, &block)
 end
 ```
 

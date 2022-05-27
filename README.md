@@ -1,24 +1,35 @@
 # Ecase
 
-Ecase allows you to write exhaustive case statements that ensure all possible cases are covered.
-
-## Usage
+Ecase allows you to write exhaustive case statements that ensure all cases are covered.
 
 ### Basic usage
-You can use an `ecase` pretty much the same way you'd use a normal `case` statement. The difference is you must pass a list of required cases to be covered by the statement as the second argument. This can be any enumerable.
+You can use an `ecase` pretty much the same way you'd use a normal `case` statement. The difference is you must pass an Enumerable list of expected cases that must be covered by the statement.
+
+Let's say you have a class `Car` with an attribute `color` that corresponds to the name of the paint: `:red`, `:green` or `blue`. You want to define a method `color_hex` that returns the correct HEX code for the color. By using an ecase, you can guarantee the statement has a definition for each possible color.
 
 ```ruby
-ecase greeting, [1, 2, 3] do
-  on(1) { "Hello" }
-  on(2, 3) { "Goodbye" }
+class Car
+  VALID_COLORS = [:red, :green, :blue]
+
+  attr_reader :color
+
+  def color_hex
+    ecase paint, VALID_COLORS do
+      on(:red) { "#ff0000" }
+      on(:green) { "#00ff00" }
+      on(:blue) { "#0000ff" }
+    end
+  end
 end
 ```
 
-### With literal enums
-If you're using ecases with the `literal_enums` gem, you can pass the enum type as the second argument, since this is enumerable.
+If we add `:green` to the list of `VALID_COLORS`, the ecase will raise an `Ecase::Error` complaining that we missed a case. It can do this because we passed in a list of expected cases.
+
+### LiteralEnums
+If you're using ecases with the `literal_enums` gem, you can pass the enum type as the second argument, since enums are Enumerable.
 
 ```ruby
-class Message
+class Message < Enum
   Greeting()
   Farewell()
 end
@@ -32,8 +43,15 @@ end
 ```
 
 ### Advanced usage
-You can also use an Ecase as part of your own Ruby API.
+You can also use an Ecase as part of your own API to demand a case definition.
 
+```ruby
+def some_method(&block)
+  Enum.new(list_of_things_that_must_be_defined, &block)
+end
+```
+
+You can also return an Ecase instance which is Enumerable, yielding a `condition` and `block`.
 
 ## Installation
 

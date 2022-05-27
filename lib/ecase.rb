@@ -31,6 +31,14 @@ class Ecase
     end
   end
 
+  def conditions
+    @handled_cases.keys
+  end
+
+  def blocks
+    @handled_cases.values
+  end
+
   protected
 
   def on(*conditions, &block)

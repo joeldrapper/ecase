@@ -7,7 +7,37 @@ class TestEcase < Minitest::Test
     refute_nil ::Ecase::VERSION
   end
 
-  def test_value_comparison
+  def test_conditions_returns_conditions
+    example_ecase = Ecase.new [1, 2] do
+      on(1) { "A" }
+      on(2) { "B" }
+    end
+
+    assert_equal [1, 2], example_ecase.conditions
+  end
+
+  def test_blocks_returns_blocks
+    example_ecase = Ecase.new [1, 2] do
+      on(1) { "A" }
+      on(2) { "B" }
+    end
+
+    assert_equal ["A", "B"], example_ecase.blocks.map(&:call)
+  end
+
+  def test_each_yields_condition_block_pairs
+    example_ecase = Ecase.new [1, 2] do
+      on(1) { "A" }
+      on(2) { "B" }
+    end
+
+    assert_equal({
+      1 => "A",
+      2 => "B"
+    }, example_ecase.to_h.transform_values(&:call))
+  end
+
+  def test_value_lookup
     result = ecase 1, [1, 2] do
       on(1) { "Hello" }
       on(2) { "World"}
@@ -16,7 +46,7 @@ class TestEcase < Minitest::Test
     assert_equal "Hello", result
   end
 
-  def test_type_comparison
+  def test_type_lookup
     result = ecase 1, [String, Integer] do
       on(String) { "Hello" }
       on(Integer) { "World" }
